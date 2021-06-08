@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # しょぼいカレンダーのjsonよりアニメタイトルを取得する。
 import json
 import requests
@@ -5,7 +6,7 @@ import requests
 url = "https://cal.syoboi.jp/json.php?Req=TitleMedium"
 session = requests.Session()
 data = session.get(url)
-json_data = json.loads(data.text)
+json_data = json.loads(data.text.encode("utf8"))
 
 # list型ver
 
@@ -41,22 +42,26 @@ def search_subTitle(source, SearchName):
     '''辞書型に入っているタイトル名を検索タイトル名(部分一致)で探し見つかったらTIDを返す
     TIDからサブタイトルを取得しサブタイトルリストを返す'''
     subTitle = []
-    try:
-        # まだ修正中どうしたもんだか、、、
-        if SearchName in source.values():
-            print('True')
-            TID = source.get('TID')
-            subTitle = get_subTitle(TID)
+    # print(source)
+    title: str
+    for k, v in source.items():
+        # print(v)
+        # print(SearchName)
+        # print(v.find(SearchName))
+        if v.find(SearchName) == 0:
+            print(v)
+            TID = k
 
-    except:
-        pass
+    print(TID)
+    subTitle = get_subTitle(TID)
 
     return subTitle
 
 
-def get_subTitle(TID):
+def get_subTitle(TID: str):
     '''TIDからサブタイトルを取得しリスト型で返す'''
     urlSub = "https://cal.syoboi.jp/json.php?Req=SubTitles&TID=" + TID
+    print(urlSub)
     session = requests.Session()
     data = session.get(urlSub)
     json_data1 = json.loads(data.text)
@@ -67,12 +72,12 @@ def get_subTitle(TID):
 if __name__ == "__main__":
     anime = []  # listの初期化
     Dic = {}  # 辞書型の初期化
-    SearchName = "イジらないで"
-    anime = search_title(2021, anime)
+    SearchName = 'イジらないで、長瀞'
+    #anime = search_title(2021, anime)
     # print(anime)
 
-    animeDic = search_title_dic(2021, Dic)
+    search_title_dic(2021, Dic)
     # print(animeDic)
 
-    subtitle = search_subTitle(animeDic, SearchName)
+    subtitle = search_subTitle(Dic, SearchName)
     print(subtitle)
