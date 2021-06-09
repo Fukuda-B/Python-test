@@ -39,33 +39,40 @@ def search_title_dic(year: str, AnimeTitleDict):
     return AnimeTitleDict
 
 
-def search_subTitle(source, SearchName):
+def search_subTitle(source, SearchName,TID):
     '''辞書型に入っているタイトル名を検索タイトル名(部分一致)で探し見つかったらTIDを返す
     TIDからサブタイトルを取得しサブタイトルリストを返す'''
     subTitle = []
+    get_title=[]
     # print(source)
     title: str
     for k, v in source.items():
         # print(v)
         # print(SearchName)
         # print(v.find(SearchName))
-        if v.find(SearchName) == 0:
-            # print(v)
-            get_title = v
-            TID = k
+        if v.find(SearchName) != -1:
+            print(v)
+            get_title.append(v)
+            TID.append(k)
 
+    print(get_title)
+    print(TID)
     subTitle = get_subTitle(TID)
 
-    return subTitle, TID, get_title
+    return subTitle, get_title
 
 
-def get_subTitle(TID: str):
+def get_subTitle(TID):
     '''TIDからサブタイトルを取得しリスト型で返す'''
-    urlSub = "https://cal.syoboi.jp/json.php?Req=SubTitles&TID=" + TID
-    # print(urlSub)
-    session = requests.Session()
-    data = session.get(urlSub)
-    json_data1 = json.loads(data.text)
+    json_data1=[]
+    for i in range(len(TID)):
+        urlSub = "https://cal.syoboi.jp/json.php?Req=SubTitles&TID=" + TID[i]
+        print(urlSub)
+        session = requests.Session()
+        data = session.get(urlSub)
+        json_data1.append(json.loads(data.text))
+
+    print(json_data1)
 
     return json_data1
 
@@ -73,6 +80,7 @@ def get_subTitle(TID: str):
 if __name__ == "__main__":
     anime = []  # listの初期化
     Dic = {}  # 辞書型の初期化
+    TID=[]
     SearchName = input('検索したいタイトル文字列を入力してください : ')
     try:
         year = input('そのタイトルは何年に放送されましたか？　例) 2021 : ')
@@ -86,9 +94,16 @@ if __name__ == "__main__":
     search_title_dic(year, Dic)
     # print(animeDic)
 
-    subtitle, TID, title = search_subTitle(Dic, SearchName)
+    subtitle, title = search_subTitle(Dic, SearchName,TID)
     # print(subtitle)
-    print('\n'+title+'が見つかりました'+'\n')
-    for i in range(1, len(subtitle['SubTitles'][str(TID)])+1):
-        print('第'+"{:2d}".format(i)+'話 : ' +
-              subtitle['SubTitles'][str(TID)][str(i)])
+    for i in range(len(title)):
+        print('\n' + title[i] + 'が見つかりました' + '\n')
+
+        try:
+            for j in range(1,len(subtitle[i]['SubTitles'][str(TID[i])])+1):
+                print('第'+"{:2d}".format(j)+'話 : ' +
+                    subtitle[i]['SubTitles'][str(TID[i])][str(j)])
+
+        except TypeError:
+            print("サブタイトルはないようです。")
+
