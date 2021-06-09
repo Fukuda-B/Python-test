@@ -39,11 +39,11 @@ def search_title_dic(year: str, AnimeTitleDict):
     return AnimeTitleDict
 
 
-def search_subTitle(source, SearchName,TID):
+def search_subTitle(source, SearchName, TID):
     '''辞書型に入っているタイトル名を検索タイトル名(部分一致)で探し見つかったらTIDを返す
     TIDからサブタイトルを取得しサブタイトルリストを返す'''
     subTitle = []
-    get_title=[]
+    get_title = []
     # print(source)
     title: str
     for k, v in source.items():
@@ -64,7 +64,7 @@ def search_subTitle(source, SearchName,TID):
 
 def get_subTitle(TID):
     '''TIDからサブタイトルを取得しリスト型で返す'''
-    json_data1=[]
+    json_data1 = []
     for i in range(len(TID)):
         urlSub = "https://cal.syoboi.jp/json.php?Req=SubTitles&TID=" + TID[i]
         print(urlSub)
@@ -80,7 +80,7 @@ def get_subTitle(TID):
 if __name__ == "__main__":
     anime = []  # listの初期化
     Dic = {}  # 辞書型の初期化
-    TID=[]
+    TID = []
     SearchName = input('検索したいタイトル文字列を入力してください : ')
     try:
         year = input('そのタイトルは何年に放送されましたか？　例) 2021 : ')
@@ -94,16 +94,16 @@ if __name__ == "__main__":
     search_title_dic(year, Dic)
     # print(animeDic)
 
-    subtitle, title = search_subTitle(Dic, SearchName,TID)
+    subtitle, title = search_subTitle(Dic, SearchName, TID)
     # print(subtitle)
+    start_range: int = 1
     for i in range(len(title)):
         print('\n' + title[i] + 'が見つかりました' + '\n')
-
         try:
-            for j in range(1,len(subtitle[i]['SubTitles'][str(TID[i])])+1):
+            start = int(next(iter(subtitle[i]['SubTitles'][str(TID[i])])))
+            for j in range(start, start+len(subtitle[i]['SubTitles'][str(TID[i])])):
                 print('第'+"{:2d}".format(j)+'話 : ' +
                     subtitle[i]['SubTitles'][str(TID[i])][str(j)])
 
         except TypeError:
-            print("サブタイトルはないようです。")
-
+            print("サブタイトルはないようです。\n")
