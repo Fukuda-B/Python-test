@@ -88,4 +88,4 @@ if __name__ == "__main__":
     subtitle, TID = search_subTitle(Dic, SearchName)
     # print(subtitle)
     for i in range(1, len(subtitle['SubTitles'][str(TID)])+1):
-        print('第'+str(i)+'話'+subtitle['SubTitles'][str(TID)][str(i)])
+        print('第'+"{:2d}".format(i)+'話 : '+subtitle['SubTitles'][str(TID)][str(i)])
