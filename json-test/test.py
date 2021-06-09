@@ -25,7 +25,7 @@ def search_title(year, AnimeTitleList):
 # 辞書型ver
 
 
-def search_title_dic(year:str, AnimeTitleDict):
+def search_title_dic(year: str, AnimeTitleDict):
     '''しょぼいカレンダーのjsonから指定された放送開始年のタイトルを取得してTIDとタイトル名を辞書型に代入する'''
     for i in range(1, len(json_data['Titles'])):
         try:
@@ -33,7 +33,7 @@ def search_title_dic(year:str, AnimeTitleDict):
                 # print(json_data['Titles'][str(i)]['Title'])  # debag
                 AnimeTitleDict[json_data['Titles']
                                [str(i)]['TID']] = json_data['Titles'][str(i)]['Title']
-            
+
         except KeyError:
             pass
     return AnimeTitleDict
@@ -51,11 +51,12 @@ def search_subTitle(source, SearchName):
         # print(v.find(SearchName))
         if v.find(SearchName) == 0:
             # print(v)
+            get_title = v
             TID = k
 
     subTitle = get_subTitle(TID)
 
-    return subTitle, TID
+    return subTitle, TID, get_title
 
 
 def get_subTitle(TID: str):
@@ -85,7 +86,9 @@ if __name__ == "__main__":
     search_title_dic(year, Dic)
     # print(animeDic)
 
-    subtitle, TID = search_subTitle(Dic, SearchName)
+    subtitle, TID, title = search_subTitle(Dic, SearchName)
     # print(subtitle)
+    print('\n'+title+'が見つかりました'+'\n')
     for i in range(1, len(subtitle['SubTitles'][str(TID)])+1):
-        print('第'+"{:2d}".format(i)+'話 : '+subtitle['SubTitles'][str(TID)][str(i)])
+        print('第'+"{:2d}".format(i)+'話 : ' +
+              subtitle['SubTitles'][str(TID)][str(i)])
